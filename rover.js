@@ -25,12 +25,11 @@ function RoverMars(position, direction, grid, obstacles) {
             return this.controlsArray;
         } 
         else {
-            for(var index = 0; index < controls.length; index++) {
-                var control = controls[index];
+            for(let index = 0; index < controls.length; index++) {
+                let control = controls[index];
                 if (control === 'f' || control === 'b') {
                     if (!move(control)) break;
-                } 
-                else if (control === 'l' || control === 'r') {
+                } else if (control === 'l' || control === 'r') {
                     turn(control);
                 }
             }
@@ -38,7 +37,6 @@ function RoverMars(position, direction, grid, obstacles) {
             this.controlsArray = controls;
         }
     };
-
 
     /**
     * Initializes rovers position
@@ -51,7 +49,6 @@ function RoverMars(position, direction, grid, obstacles) {
         ];
     }
 
-
     /**
     * Checks if there is another rover in the same position
     *
@@ -60,8 +57,7 @@ function RoverMars(position, direction, grid, obstacles) {
     * 
     **/
     function roverInPosition(rover, rovers) {
-        var i;
-        for (i = 0; i < roversInMars.length; i++) {
+        for (let i = 0; i < roversInMars.length; i++) {
             if (roversInMars[i] === rover) {
                 return true;
             }
@@ -69,30 +65,30 @@ function RoverMars(position, direction, grid, obstacles) {
         return false;
     }
 
-
     /**
     * Moves rover
     * 
     **/
     function move(control) {
-        var xIncrease = 0, yIncrease = 0;
+        let xIncrease = 0, 
+            yIncrease = 0;
+        
         if (self.direction === 'N') {
             yIncrease = -1;
-        } 
-        else if (self.direction === 'E') { // East
+        } else if (self.direction === 'E') { // East
             xIncrease = 1;
-        } 
-        else if (self.direction === 'S') { // South
+        } else if (self.direction === 'S') { // South
             yIncrease = 1;
-        } 
-        else if (self.direction === 'W') { // West
+        } else if (self.direction === 'W') { // West
             xIncrease = -1;
         }
         if (control === 'b') { // Backward
             xIncrease *= -1;
             yIncrease *= -1;
         }
-        var newPosition = [self.position[0] + xIncrease, self.position[1] + yIncrease];
+        
+        let newPosition = [self.position[0] + xIncrease, self.position[1] + yIncrease];
+        
         if (isObstacle(newPosition)) {
             console.log(self.position[0] + ',' + self.position[1]);
             return false;
@@ -101,13 +97,12 @@ function RoverMars(position, direction, grid, obstacles) {
         return true;
     }
 
-
     /**
     * Checks if new position is obstacle
     * 
     **/
     function isObstacle(newPosition) {
-        for(var index = 0; index < self.obstacles.length; index++) {
+        for(let index = 0; index < self.obstacles.length; index++) {
             if (newPosition.toString() == self.obstacles[index].toString()) {
                 self.status = 'obstacle';
                 return true;
@@ -116,7 +111,6 @@ function RoverMars(position, direction, grid, obstacles) {
         return false;
     }
 
-
     /**
     * changes direction
     *
@@ -124,19 +118,17 @@ function RoverMars(position, direction, grid, obstacles) {
     *
     **/
     function turn(control) {
-        var directionNumber = directionAsNumber(self.direction);
+        let directionNumber = directionAsNumber(self.direction);
+        
         if (control === 'l') { // Left
             directionNumber = (directionNumber + 4 - 1) % 4;
-        } 
-        else { // Right
+        } else { // Right
             directionNumber = (directionNumber + 1) % 4;
         }
         self.direction = self.directions[directionNumber];
     }
-
-
+    
     this.directions = ['N', 'E', 'S', 'W'];
-
 
     /**
     * sets direction as number
@@ -145,7 +137,7 @@ function RoverMars(position, direction, grid, obstacles) {
     *
     **/
     function directionAsNumber(direction) {
-        for(var index = 0; index < 4; index++) {
+        for(let index = 0; index < 4; index++) {
             if (self.directions[index] === direction) {
                 return index;
             }
