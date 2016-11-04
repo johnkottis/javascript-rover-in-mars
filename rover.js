@@ -5,7 +5,7 @@
 */
 
 
-function RoverMars(position, direction, grid, obstacles) {
+function RoverMars (position, direction, grid, obstacles) {
 
     self = this;
     this.position = (position === undefined) ? [0, 0] : position;
@@ -20,12 +20,11 @@ function RoverMars(position, direction, grid, obstacles) {
     * @controls {Array} of controls/ moving options
     *
     **/
-    this.controls = function(controls) {
+    this.controls = function (controls) {
         if (controls === undefined) {
             return this.controlsArray;
-        } 
-        else {
-            for(let index = 0; index < controls.length; index++) {
+        }  else {
+            for (let index = 0; index < controls.length; index++) {
                 let control = controls[index];
                 if (control === 'f' || control === 'b') {
                     if (!move(control)) break;
@@ -42,7 +41,7 @@ function RoverMars(position, direction, grid, obstacles) {
     * Initializes rovers position
     *
     **/
-    function resetPosition() {
+    function resetPosition () {
         self.position = [
             (self.position[0] + self.grid[0]) % self.grid[0],
             (self.position[1] + self.grid[1]) % self.grid[1]
@@ -56,7 +55,7 @@ function RoverMars(position, direction, grid, obstacles) {
     * rovers {Array} of rover objects
     * 
     **/
-    function roverInPosition(rover, rovers) {
+    function roverInPosition (rover, rovers) {
         for (let i = 0; i < roversInMars.length; i++) {
             if (roversInMars[i] === rover) {
                 return true;
@@ -69,7 +68,7 @@ function RoverMars(position, direction, grid, obstacles) {
     * Moves rover
     * 
     **/
-    function move(control) {
+    function move (control) {
         let xIncrease = 0, 
             yIncrease = 0;
         
@@ -101,7 +100,7 @@ function RoverMars(position, direction, grid, obstacles) {
     * Checks if new position is obstacle
     * 
     **/
-    function isObstacle(newPosition) {
+    function isObstacle (newPosition) {
         for(let index = 0; index < self.obstacles.length; index++) {
             if (newPosition.toString() == self.obstacles[index].toString()) {
                 self.status = 'obstacle';
@@ -117,7 +116,7 @@ function RoverMars(position, direction, grid, obstacles) {
     * @control {String} user input
     *
     **/
-    function turn(control) {
+    function turn (control) {
         let directionNumber = directionAsNumber(self.direction);
         
         if (control === 'l') { // Left
@@ -136,7 +135,7 @@ function RoverMars(position, direction, grid, obstacles) {
     * @direction {String} rover direction
     *
     **/
-    function directionAsNumber(direction) {
+    function directionAsNumber (direction) {
         for(let index = 0; index < 4; index++) {
             if (self.directions[index] === direction) {
                 return index;
