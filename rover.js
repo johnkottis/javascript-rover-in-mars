@@ -1,26 +1,25 @@
 /**
- *   Rover functions and constructor
+ * Rover functions and constructor
  */
- function RoverMars (position, direction, grid, obstacles) {
-    self = this;
-    this.position = (position === undefined) ? [0, 0] : position;
-    this.direction = (direction === undefined) ? 'N' : direction;
-    this.grid = (grid === undefined) ? [100, 100] : grid;
-    this.obstacles = (obstacles === undefined) ? [] : obstacles;
+function RoverMars(position = [0, 0], direction = 'N', grid = [100, 100], obstacles = []) {
+    this.position = position;
+    this.direction = direction;
+    this.grid = grid;
+    this.obstacles = obstacles;
     this.status = 'OK';
+    this.directions = ['N', 'E', 'S', 'W'];
+    this.controlsArray = [];
 
     /**
-     * Controls of the rover
-     * 
-     * @param  {Object} controls          - array with controls/ moving options
+     * Controls the rover based on the provided commands
      *
-     **/
-     this.controls = function (controls) {
+     * @param  {Array} controls - Array with control commands
+     */
+    this.controls = function (controls) {
         if (controls === undefined) {
             return this.controlsArray;
         } else {
-            for (let index = 0; index < controls.length; index++) {
-                let control = controls[index];
+            for (let control of controls) {
                 if (control === 'f' || control === 'b') {
                     if (!move(control)) break;
                 } else if (control === 'l' || control === 'r') {
@@ -33,111 +32,96 @@
     };
 
     /**
-     * Puts rover into original position
-     *
-     **/
-     function resetPosition () {
-        self.position = [
-        (self.position[0] + self.grid[0]) % self.grid[0],
-        (self.position[1] + self.grid[1]) % self.grid[1]
+     * Resets rover's position to be within the grid boundaries
+     */
+    const resetPosition = () => {
+        this.position = [
+            (this.position[0] + this.grid[0]) % this.grid[0],
+            (this.position[1] + this.grid[1]) % this.grid[1]
         ];
-    }
+    };
 
     /**
      * Checks if there is another rover in the same position
      *
-     * @param  {Object} rover          - Rover Object
-     * @param  {Object} rover          - Array of Rovers
-     * 
-     **/
-     function roverInPosition (rover, rovers) {
-        for (let i = 0; i < roversInMars.length; i++) {
-            if (roversInMars[i] === rover) {
-                return true;
-            }
-        }
-        return false;
-    }
+     * @param  {Object} rover  - Rover object
+     * @param  {Array} rovers  - Array of Rover objects
+     * @return {Boolean}       - True if another rover is in the same position
+     */
+    const roverInPosition = (rover, rovers) => {
+        return rovers.some(r => r === rover);
+    };
 
     /**
-     * Moves rover
-     * 
-     * @param  {String} control          - User selection for rover's move
+     * Moves the rover based on the control command
      *
-     **/
-     function move (control) {
-        let xIncrease = 0,
-        yIncrease = 0;
+     * @param  {String} control - Command to move the rover ('f' for forward, 'b' for backward)
+     * @return {Boolean}        - True if the rover moved successfully, false if it encountered an obstacle
+     */
+    const move = (control) => {
+        let [xIncrease, yIncrease] = [0, 0];
 
-        if (self.direction === 'N') {
-            yIncrease = -1;
-        } else if (self.direction === 'E') { // East
-            xIncrease = 1;
-        } else if (self.direction === 'S') { // South
-            yIncrease = 1;
-        } else if (self.direction === 'W') { // West
-            xIncrease = -1;
+        switch (this.direction) {
+            case 'N': yIncrease = -1; break;
+            case 'E': xIncrease = 1; break;
+            case 'S': yIncrease = 1; break;
+            case 'W': xIncrease = -1; break;
         }
-        if (control === 'b') { // Backward
+
+        if (control === 'b') {
             xIncrease *= -1;
             yIncrease *= -1;
         }
 
-        let newPosition = [self.position[0] + xIncrease, self.position[1] + yIncrease];
+        const newPosition = [this.position[0] + xIncrease, this.position[1] + yIncrease];
 
         if (isObstacle(newPosition)) {
-            console.log(self.position[0] + ',' + self.position[1]);
+            console.log(`${this.position[0]},${this.position[1]}`);
             return false;
         }
-        self.position = newPosition;
+        this.position = newPosition;
         return true;
-    }
+    };
 
     /**
-     * Checks if new position is obstacle
-     * 
-     * @param  {Int} newPosition          - Rover's new position
-     **/
-     function isObstacle (newPosition) {
-        for (let index = 0; index < self.obstacles.length; index++) {
-            if (newPosition.toString() == self.obstacles[index].toString()) {
-                self.status = 'obstacle';
+     * Checks if the new position has an obstacle
+     *
+     * @param  {Array} newPosition - Rover's new position
+     * @return {Boolean}           - True if there's an obstacle, false otherwise
+     */
+    const isObstacle = (newPosition) => {
+        for (let obstacle of this.obstacles) {
+            if (newPosition.toString() === obstacle.toString()) {
+                this.status = 'obstacle';
                 return true;
             }
         }
         return false;
-    }
+    };
 
     /**
-     * changes direction
+     * Changes the direction of the rover
      *
-     * @param  {String} control          - User's input
-     *
-     **/
-     function turn (control) {
-        let directionNumber = directionAsNumber(self.direction);
+     * @param  {String} control - Command to turn the rover ('l' for left, 'r' for right)
+     */
+    const turn = (control) => {
+        let directionNumber = directionAsNumber(this.direction);
 
-        if (control === 'l') { // Left
-            directionNumber = (directionNumber + 4 - 1) % 4;
-        } else { // Right
-            directionNumber = (directionNumber + 1) % 4;
+        if (control === 'l') {
+            directionNumber = (directionNumber + 3) % 4; // Turn left
+        } else {
+            directionNumber = (directionNumber + 1) % 4; // Turn right
         }
-        self.direction = self.directions[directionNumber];
-    }
-
-    this.directions = ['N', 'E', 'S', 'W'];
+        this.direction = this.directions[directionNumber];
+    };
 
     /**
-     * sets direction as number
+     * Converts a direction to its corresponding number
      *
-     * @param  {String} direction          - Rover's direction
-     *
-     **/
-     function directionAsNumber (direction) {
-        for (let index = 0; index < 4; index++) {
-            if (self.directions[index] === direction) {
-                return index;
-            }
-        }
-    }
+     * @param  {String} direction - Rover's direction ('N', 'E', 'S', 'W')
+     * @return {Number}           - Corresponding number (0-3)
+     */
+    const directionAsNumber = (direction) => {
+        return this.directions.indexOf(direction);
+    };
 }
